@@ -2,23 +2,17 @@ const fs = require('fs');
 const path = require('path');
 
 function loadCommands(client) {
-    const commandsPath = path.join(__dirname, '../commands');
-    const commandFolders = fs.readdirSync(commandsPath);
+    const commandFiles = fs.readdirSync(path.join(__dirname, '../commands')).filter(file => file.endsWith('.js'));
 
-    for (const folder of commandFolders) {
-        const folderPath = path.join(commandsPath, folder);
-        const commandFiles = fs.readdirSync(folderPath).filter((file) => file.endsWith('.js'));
-
-        for (const file of commandFiles) {
-            const command = require(path.join(folderPath, file));
-            if (command.name && command.execute) {
-                client.commands.set(command.name, command);
-            } else {
-                console.error(`Command at ${file} is missing "name" or "execute" property.`);
-            }
+    for (const file of commandFiles) {
+        const command = require(`../commands/${file}`);
+        if (command.name) {
+            client.commands.set(command.name, command);
+            console.log(`Loaded command: ${command.name}`);
+        } else {
+            console.warn(`Skipping file: ${file} (missing command name)`);
         }
     }
 }
 
 module.exports = { loadCommands };
-
