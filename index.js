@@ -1,13 +1,15 @@
 const { Client, Collection, GatewayIntentBits, REST, Routes } = require('discord.js');
 const fs = require('fs');
-require('dotenv').config();
+require('dotenv').config(); // Load environment variables from .env
 
 const client = new Client({
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
 });
 
-// Prefix for non-slash commands
-const PREFIX = '!';
+// Configuration
+const PREFIX = process.env.PREFIX || '!'; // Prefix for non-slash commands
+const TOKEN = process.env.TOKEN; // Bot token
+const CLIENT_ID = process.env.CLIENT_ID; // Bot client ID
 
 // Load prefix commands into a Collection
 client.commands = new Collection();
@@ -27,12 +29,13 @@ for (const file of slashCommandFiles) {
     }
 }
 
+// Register slash commands during startup
 (async () => {
     try {
         console.log('Refreshing application (/) commands...');
-        const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
+        const rest = new REST({ version: '10' }).setToken(TOKEN);
 
-        await rest.put(Routes.applicationCommands('YOUR_CLIENT_ID'), { body: slashCommands });
+        await rest.put(Routes.applicationCommands(CLIENT_ID), { body: slashCommands });
 
         console.log('Successfully registered (/) commands.');
     } catch (error) {
@@ -78,4 +81,4 @@ client.on('messageCreate', (message) => {
 });
 
 // Log in to Discord
-client.login(process.env.TOKEN);
+client.login(TOKEN);
