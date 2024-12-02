@@ -79,6 +79,6 @@ client.on('messageCreate', (message) => {
         message.reply('There was an error executing this command!');
     }
 });
-
+keepAlive();
 // Log in to Discord
 client.login(TOKEN);
