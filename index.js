@@ -1,6 +1,8 @@
 const { Client, Collection, GatewayIntentBits, REST, Routes } = require('discord.js');
 const fs = require('fs');
 require('dotenv').config(); // Load environment variables from .env
+const keepAlive = require('./keep_alive.js');
+
 
 const client = new Client({
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
